@@ -84,7 +84,14 @@ def preparecolmapdynerf(folder, offset=0):
 
         assert imagepath.exists
         # shutil.copy(imagepath, imagesavepath)
-        imagesavepath.symlink_to(imagepath.resolve())
+        # COLMAP 3.12+ resolves symlinks and registers each image under its TARGET
+        # path, producing duplicate image rows with no rig/frame entry, which aborts
+        # point_triangulator in DatabaseCache::Load. Hard-link instead: same inode so
+        # no extra disk, but COLMAP sees a real file at the expected name.
+        try:
+            os.link(imagepath.resolve(), imagesavepath)
+        except OSError:
+            shutil.copy(imagepath, imagesavepath)
 
 
 def convertdynerftocolmapdb(path, offset=0, downscale=1):
@@ -158,7 +165,7 @@ if __name__ == "__main__" :
     print("start extracting 300 frames from videos")
     videoslist = sorted(videopath.glob("*.mp4"))
     for v in tqdm.tqdm(videoslist, desc="Extract frames from videos"):
-        extractframes(v, downscale=downscale)
+        extractframes(v, startframe=startframe, endframe=endframe, downscale=downscale)
 
     
 

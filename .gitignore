@@ -40,3 +40,7 @@ test.sh
 *.sh
 log/*
 model/*
+
+# local SIBR checkout (evaluated, not used - see SETUP_NOTES.md)
+thirdparty/SIBR_viewers/
+viewer_shot_*.png

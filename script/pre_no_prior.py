@@ -61,7 +61,14 @@ def prepare_colmap(folder, offset, extension, point_root):
         if (imagesavepath.exists()):
             continue
             
-        imagesavepath.symlink_to(imagepath.resolve())
+        # COLMAP 3.12+ resolves symlinks and registers each image under its TARGET
+        # path, producing duplicate image rows with no rig/frame entry, which aborts
+        # point_triangulator in DatabaseCache::Load. Hard-link instead: same inode so
+        # no extra disk, but COLMAP sees a real file at the expected name.
+        try:
+            os.link(imagepath.resolve(), imagesavepath)
+        except OSError:
+            shutil.copy(imagepath, imagesavepath)
 
     
 

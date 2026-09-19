@@ -164,13 +164,13 @@ def getcolmapsinglen3d(folder, offset):
 
     exit_code = os.system(featureextract)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
 
 
     featurematcher = "colmap exhaustive_matcher --database_path " + dbfile
     exit_code = os.system(featurematcher)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
 
    # threshold is from   https://github.com/google-research/multinerf/blob/5b4d4f64608ec8077222c52fdf814d40acc10bc1/scripts/local_colmap_and_resize.sh#L62
     triandmap = "colmap point_triangulator --database_path "+   dbfile  + " --image_path "+ inputimagefolder + " --output_path " + distortedmodel \
@@ -178,7 +178,7 @@ def getcolmapsinglen3d(folder, offset):
    
     exit_code = os.system(triandmap)
     if exit_code != 0:
-       exit(exit_code)
+       sys.exit(1)
     print(triandmap)
 
 
@@ -186,13 +186,13 @@ def getcolmapsinglen3d(folder, offset):
     + " --output_type COLMAP" 
     exit_code = os.system(img_undist_cmd)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
     print(img_undist_cmd)
 
     removeinput = "rm -r " + inputimagefolder
     exit_code = os.system(removeinput)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
 
     files = os.listdir(folder + "/sparse")
     os.makedirs(folder + "/sparse/0", exist_ok=True)
@@ -228,13 +228,13 @@ def getcolmapsingleimundistort(folder, offset):
     
     exit_code = os.system(featureextract)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
     
 
     featurematcher = "colmap exhaustive_matcher --database_path " + dbfile
     exit_code = os.system(featurematcher)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
 
 
     triandmap = "colmap point_triangulator --database_path "+   dbfile  + " --image_path "+ inputimagefolder + " --output_path " + distortedmodel \
@@ -242,7 +242,7 @@ def getcolmapsingleimundistort(folder, offset):
    
     exit_code = os.system(triandmap)
     if exit_code != 0:
-       exit(exit_code)
+       sys.exit(1)
     print(triandmap)
 
 
@@ -252,13 +252,13 @@ def getcolmapsingleimundistort(folder, offset):
     + " --output_type COLMAP "  # --blank_pixels 1
     exit_code = os.system(img_undist_cmd)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
     print(img_undist_cmd)
 
     removeinput = "rm -r " + inputimagefolder
     exit_code = os.system(removeinput)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
 
     files = os.listdir(folder + "/sparse")
     os.makedirs(folder + "/sparse/0", exist_ok=True)
@@ -293,13 +293,13 @@ def getcolmapsingleimdistort(folder, offset):
     
     exit_code = os.system(featureextract)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
     
 
     featurematcher = "colmap exhaustive_matcher --database_path " + dbfile
     exit_code = os.system(featurematcher)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
 
 
     triandmap = "colmap point_triangulator --database_path "+   dbfile  + " --image_path "+ inputimagefolder + " --output_path " + distortedmodel \
@@ -307,20 +307,20 @@ def getcolmapsingleimdistort(folder, offset):
    
     exit_code = os.system(triandmap)
     if exit_code != 0:
-       exit(exit_code)
+       sys.exit(1)
     print(triandmap)
 
     img_undist_cmd = "colmap" + " image_undistorter --image_path " + inputimagefolder + " --input_path " + distortedmodel + " --output_path " + folder  \
     + " --output_type COLMAP "  # --blank_pixels 1
     exit_code = os.system(img_undist_cmd)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
     print(img_undist_cmd)
 
     removeinput = "rm -r " + inputimagefolder
     exit_code = os.system(removeinput)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
 
     files = os.listdir(folder + "/sparse")
     os.makedirs(folder + "/sparse/0", exist_ok=True)
@@ -353,13 +353,13 @@ def getcolmapsingletechni(folder, offset):
     
     exit_code = os.system(featureextract)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
     
 
     featurematcher = "colmap exhaustive_matcher --database_path " + dbfile
     exit_code = os.system(featurematcher)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
 
 
     triandmap = "colmap point_triangulator --database_path "+   dbfile  + " --image_path "+ inputimagefolder + " --output_path " + distortedmodel \
@@ -367,14 +367,14 @@ def getcolmapsingletechni(folder, offset):
    
     exit_code = os.system(triandmap)
     if exit_code != 0:
-       exit(exit_code)
+       sys.exit(1)
     print(triandmap)
 
     img_undist_cmd = "colmap" + " image_undistorter --image_path " + inputimagefolder + " --input_path " + distortedmodel + " --output_path " + folder  \
     + " --output_type COLMAP "  #
     exit_code = os.system(img_undist_cmd)
     if exit_code != 0:
-        exit(exit_code)
+        sys.exit(1)
     print(img_undist_cmd)
 
 

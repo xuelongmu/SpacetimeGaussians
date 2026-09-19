@@ -127,6 +127,7 @@ def train(dataset, opt, pipe, saving_iterations, debug_from, densify=0, duration
     validdepthdict = {}
     emsstartfromiterations = opt.emsstart   
 
+    emptycams = []
     with torch.no_grad():
         timeindex = 0 # 0 to 49
         viewpointset = traincamdict[timeindex]
@@ -143,8 +144,25 @@ def train(dataset, opt, pipe, saving_iterations, debug_from, densify=0, duration
             depth = render_pkg["depth"]
             slectemask = depth != 15.0 
 
-            validdepthdict[viewpoint_cam.image_name] = torch.median(depth[slectemask]).item()   
-            depthdict[viewpoint_cam.image_name] = torch.amax(depth[slectemask]).item() 
+            valid = depth[slectemask]
+            if valid.numel() == 0:
+                # This camera sees none of the initial SfM points. Happens with a
+                # sparse cloud on a wide-baseline surround rig, where some cameras
+                # face floor/wall that nothing else triangulated. Defer it and fill
+                # from the scene-wide values below rather than crashing on amax().
+                emptycams.append(viewpoint_cam.image_name)
+                continue
+            validdepthdict[viewpoint_cam.image_name] = torch.median(valid).item()   
+            depthdict[viewpoint_cam.image_name] = torch.amax(valid).item() 
+
+        if emptycams:
+            fallbackvalid = np.median(list(validdepthdict.values())) if validdepthdict else 1.0
+            fallbackmax = np.max(list(depthdict.values())) if depthdict else 10.0
+            print(f"{len(emptycams)} camera(s) saw no initial points; "
+                  f"using scene depth median={fallbackvalid:.3f} max={fallbackmax:.3f}: {emptycams}")
+            for name in emptycams:
+                validdepthdict[name] = float(fallbackvalid)
+                depthdict[name] = float(fallbackmax)
     
     if densify == 1 or  densify == 2: 
         zmask = gaussians._xyz[:,2] < 4.5  

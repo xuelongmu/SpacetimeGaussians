@@ -24,7 +24,7 @@ import torch
 from thirdparty.gaussian_splatting.utils.graphics_utils import BasicPointCloud
 import numpy as np
 from simple_knn._C import distCUDA2
-from mmcv.ops import knn
+from torch_knn import knn
 import torch.nn as nn
 
 
